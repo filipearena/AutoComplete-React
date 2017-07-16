@@ -4,6 +4,7 @@ import $ from 'jquery';
 import './App.css';
 
 class App extends React.Component {
+    //constructor that sets the initial states of some variables
     constructor() {
         super();
         this.state = {
@@ -15,11 +16,14 @@ class App extends React.Component {
         this.componentWillMount = this.componentWillMount.bind(this)
     }
 
+    //lifecycle method to be called on init
     componentWillMount() {
         this.getCountrieList();
     }
 
+    //Function called on willMount method to get the list of countries
     getCountrieList() {
+        //http GET method requesting data from a server
         return $.getJSON('https://restcountries.eu/rest/v2/all')
             .then((data) => {
                 this.setState({
@@ -29,10 +33,13 @@ class App extends React.Component {
             });
     }
 
+    //Function responsible for generation the autocomplete options given a certain input
     generateOptions = (event) => {
+        //res receives the filtered results
         let res = this.state.options.filter(function (item) {
             return item.name.toLowerCase().indexOf(event.target.value.toLowerCase()) > -1
         });
+        //after the options are generated, a few states must be updated
         this.setState({
             optionWasSelected: false,
             inputText: event.target.value,
@@ -40,6 +47,7 @@ class App extends React.Component {
         });
     };
 
+    //Function responsible for making the input value being set with the same value as the option selected
     selectOptionFromList(selectedOption) {
         this.setState({
             inputText: selectedOption,
@@ -48,8 +56,11 @@ class App extends React.Component {
         });
     }
 
+    //Function responsible for rendering the html using JSX with a little logic behind it
     render() {
         let optionsList, loader;
+
+        //Logic behind the value of the optionsList variable, that gathers the list of all results
         if (this.state.filteredOptions.length > 0 && this.state.inputText.length > 0) {
             optionsList = <ul
                 className="options-list">
@@ -64,6 +75,7 @@ class App extends React.Component {
             optionsList = undefined
         }
 
+        //Logic behind the value of the requestFinished variable, that controls the displaying of the loading screen
         if (!this.state.requestFinished) {
             loader = <div className="overlay">
                 <div id="loading"></div>
